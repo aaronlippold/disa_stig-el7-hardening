@@ -1,0 +1,116 @@
+# NOTE: To use this file you must export or set the following:
+# AWS_SG_ID : your aws security group id
+# AWS_SSH_KEY_ID : your aws ssh key id
+# AWS_SUBNET_ID : your aws subnet id for your vpc
+# USE_JSON : set to true if you want inspec to output JSON
+# NOTE: This file assumes your aws ssh private key is in your home dir .ssh dir
+# USE_EBS : implements a beefier amazon instance to support ebs-optimized storage
+<%
+  platforms = %w(centos-7 centos-6)
+  use_json = ENV['USE_JSON']
+  use_ebs = ENV['USE_EBS']
+%>
+---
+driver:
+  name: ec2
+  chef_version: latest
+  privileged: true
+  aws_ssh_key_id: <%= ENV['AWS_SSH_KEY_ID'] %>
+  # security_group_ids:
+  # subnet_id:
+  shared_credentials_profile: nga_inspec_demo
+  region: us-west-2 # <%= ENV['AWS_DEFAULT_REGION'] %>
+  security_group_ids: ["sg-3b7a8545"] # <%= ENV['AWS_SG_ID'] %>
+  image_id: ami-b55a51cc # <%= ENV['AWS_AMI_ID'] %> #optional if a specific ami is needed
+  instance_type: t2.micro # optional instance type default:t2.micro
+  subnet_id: subnet-240a2541 # <%= ENV['AWS_SUBNET_ID'] %>
+  region: us-west-2
+
+  <% if ENV['USE_EBS'] == 'true' %>
+  ebs_optimized: true
+  instance_type: i3.2xlarge
+  block_device_mappings:
+    - device_name: /dev/sda1
+      ebs:
+        volume_type: gp2
+        delete_on_termination: true
+  <% end %>
+
+provisioner:
+  name: chef_solo
+
+transport:
+  name: ssh
+  shared_credentials_profile: nga_inspec_demo
+  connection_timeout: 10
+  connection_retries: 5
+  ssh_key: ~/.ssh/<%= ENV['AWS_SSH_KEY_ID'] %>.pem
+
+verifier:
+  name: inspec
+  sudo: true
+  sudo_options: '-u root'
+  inspec_tests:
+    #- name: nginix-baseline
+    #  git: https://github.com/aaronlippold/nginx-baseline.git
+    - name: disa_stig-el7
+      git: https://github.com/jburns12/inspec-profile-disa_stig-el7.git
+  attrs:
+    - aws.attributes.yml
+
+  <% if ENV['USE_JSON'] == 'true' %>
+  format: json
+  output: "%{platform}_%{suite}-<%= Time.now.iso8601 %>.json"
+  <% end %>
+
+platforms:
+<% platforms.each do |plat| %>
+- name: <%= plat %>
+<% end %>
+
+suites:
+  - name: hardened-nginx
+    run_list:
+      - recipe[auditd]
+      - recipe[stig::auditd]
+      - recipe[stig::auditd_rules]
+      - recipe[stig::fstab_tmp]
+      - recipe[stig::tcp_wrappers]
+      - recipe[stig::boot_settings]
+      - recipe[stig::proc_hard]
+      - recipe[stig::cis]
+      - recipe[stig::avahi_daemon]
+      - recipe[stig::ipv6]
+      - recipe[stig::dhcp]
+      #- recipe[stig::mail_transfer_agent]
+      - recipe[stig::hosts]
+      - recipe[stig::rsyslog]
+      - recipe[logrotate::global]
+      - recipe[stig::sshd_config]
+      - recipe[stig::system_auth]
+      - recipe[stig::login_defs]
+      - recipe[stig::login_banner]
+      - recipe[stig::file_permissions]
+      - recipe[stig::audits]
+      - recipe[stig::audit_scripts]
+      - recipe[stig::su_restriction]
+      - recipe[stig::aide]
+
+      # nginx runlist
+      #- recipe[apt]
+      #- recipe[nginx-hardening::upgrades]
+      #- recipe[nginx]
+      #- recipe[nginx-hardening]
+
+      # # PDT Setup
+      # - recipe[pdt]
+
+    attributes:
+      "auditd" :
+        "ruleset" : "stig"
+
+  - name: vanilla
+    run_list:
+      #- recipe[apt]
+      #- recipe[nginx-hardening::upgrades]
+      #- recipe[nginx]
