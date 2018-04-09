@@ -32,7 +32,7 @@ major_version = node['platform_version'][0, 1].to_i
 template '/etc/grub.d/40_custom' do
   source 'etc_grubd_40_custom.erb'
   variables(
-    pass: node['stig']['grub']['hashedpassword']
+    pass: node.default['stig']['grub']['hashedpassword']
   )
   sensitive true
   notifies :run, 'execute[update-grub]', :immediately
@@ -68,13 +68,13 @@ execute 'Remove enforcing=0 from grub file' do
 end
 
 # 1.5.3
-password = node['stig']['grub']['hashedpassword']
+password = node.default['stig']['grub']['hashedpassword']
 execute 'Add MD5 password to grub' do
   command "sed -i '11i password --md5 #{password}' #{grub_file}"
   not_if "grep -q '#{password}' #{grub_file}"
   only_if { %w[rhel fedora centos redhat].include? platform }
   only_if { major_version < 7 }
-  only_if { node['stig']['grub']['hashedpassword'] != '' }
+  only_if { node.default['stig']['grub']['hashedpassword'] != '' }
 end
 
 execute 'Add password to grub' do
@@ -82,7 +82,7 @@ execute 'Add password to grub' do
   only_if "grep -q 'password' #{grub_file}"
   only_if { %w[rhel fedora centos redhat].include? platform }
   only_if { major_version < 7 }
-  only_if { node['stig']['grub']['hashedpassword'] == '' }
+  only_if { node.default['stig']['grub']['hashedpassword'] == '' }
 end
 
 # TODO: Create adding password to grub for CentOS 7
@@ -94,9 +94,9 @@ cookbook_file '/etc/inittab' do
   only_if { major_version < 7 }
 end
 
-enabled_selinux = node['stig']['selinux']['enabled']
-status_selinux = node['stig']['selinux']['status']
-type_selinux = node['stig']['selinux']['type']
+enabled_selinux = node.default['stig']['selinux']['enabled']
+status_selinux = node.default['stig']['selinux']['status']
+type_selinux = node.default['stig']['selinux']['type']
 
 template '/etc/selinux/config' do
   source 'etc_selinux_config.erb'

@@ -19,7 +19,7 @@ if %w[debian ubuntu].include?(node['platform'])
 end
 
 template '/etc/postfix/main.cf' do
-  source source
+  source source.to_s
   owner 'root'
   group 'root'
   mode 0o644

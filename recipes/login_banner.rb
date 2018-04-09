@@ -18,7 +18,7 @@ template 'motd' do
   group 'root'
   mode 0o644
   variables(
-    banner_text: node['stig']['login_banner']['motd']
+    banner_text: node.default['stig']['login_banner']['motd']
   )
 end
 
@@ -28,7 +28,7 @@ template 'issue' do
   group 'root'
   mode 0o644
   variables(
-    banner_text: node['stig']['login_banner']['issue']
+    banner_text: node.default['stig']['login_banner']['issue']
   )
 end
 
@@ -38,6 +38,6 @@ template 'issue.net' do
   group 'root'
   mode 0o644
   variables(
-    banner_text: node['stig']['login_banner']['issue_net']
+    banner_text: node.default['stig']['login_banner']['issue_net']
   )
 end

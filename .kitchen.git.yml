@@ -1,6 +1,7 @@
 <%
   platforms = %w(centos-7 centos-6)
-  use_git = true
+  use_git = 'true'
+  use_json = 'true'
 %>
 ---
 driver:
@@ -12,8 +13,10 @@ provisioner:
 verifier:
   name: inspec
   sudo: true
-  #format: json
-  #output: hardenedrhel7.json
+<% if use_json == 'true' %>
+  format: json
+  output: results.json
+<% end %>
 
 platforms:
 <% platforms.each do |plat| %>
@@ -21,16 +24,20 @@ platforms:
   verifier:
       inspec_tests:
       - name: <%= plat %>
-      <% if use_git == false %>
+      <% if use_git == 'false' %>
         path: test/integration/<%= plat %>/inspec
       <% else %>
         git: https://github.com/djhaynes/inspec-profile-disa_stig-el7.git
+        branch: dev
       <% end %>
+      attrs:
+      - attributes.dev.yml
 <% end %>
 
 suites:
   - name: default
     run_list:
+      - recipe[stig::core_packages]
       - recipe[auditd]
       - recipe[stig::auditd]
       - recipe[stig::auditd_rules]

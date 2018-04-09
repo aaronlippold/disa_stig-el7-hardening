@@ -11,7 +11,7 @@
 #
 # - Disable IPv6 for RHEL
 
-if node['stig']['network']['ipv6'] == 'no'
+if node.default['stig']['network']['ipv6'] == 'no'
   ipv6 = 1
   ipv6onoff = 'off'
 else
@@ -43,7 +43,7 @@ if %w[rhel fedora centos redhat].include?(node['platform'])
 
     service 'ip6tables' do
       action :start
-      not_if { node['stig']['network']['ipv6'] == 'no' }
+      not_if { node.default['stig']['network']['ipv6'] == 'no' }
     end
 
   else

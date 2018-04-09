@@ -9,7 +9,7 @@ require 'pathname'
 
 platform = node['platform']
 
-pass_reuse_limit = node['stig']['system_auth']['pass_reuse_limit']
+pass_reuse_limit = node.default['stig']['system_auth']['pass_reuse_limit']
 pamd_dir = '/etc/pam.d'
 
 # We assume that the system-auth and password-auth files are symlinks. I want to
@@ -37,7 +37,7 @@ template system_auth_file do
   group 'root'
   mode 0o644
   variables(
-    auth_rules: node['stig']['pam_d']['config']['system_auth']
+    auth_rules: node.default['stig']['pam_d']['config']['system_auth']
   )
 end
 
@@ -47,7 +47,7 @@ template password_auth_file do
   group 'root'
   mode 0o644
   variables(
-    auth_rules: node['stig']['pam_d']['config']['password_auth']
+    auth_rules: node.default['stig']['pam_d']['config']['password_auth']
   )
 end
 

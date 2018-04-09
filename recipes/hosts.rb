@@ -20,7 +20,7 @@ template '/etc/hosts.allow' do
   mode 0o644
   source 'etc_hosts.allow.erb'
   variables(
-    hosts_allow: node['stig']['network']['hosts_allow']
+    hosts_allow: node.default['stig']['network']['hosts_allow']
   )
 end
 
@@ -30,6 +30,6 @@ template '/etc/hosts.deny' do
   mode 0o644
   source 'etc_hosts.deny.erb'
   variables(
-    hosts_deny: node['stig']['network']['hosts_deny']
+    hosts_deny: node.default['stig']['network']['hosts_deny']
   )
 end

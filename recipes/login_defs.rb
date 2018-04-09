@@ -19,8 +19,8 @@ template '/etc/login.defs' do
   group 'root'
   mode 0o644
   variables(
-    pass_max_days: node['stig']['login_defs']['pass_max_days'],
-    pass_min_days: node['stig']['login_defs']['pass_min_days'],
-    pass_warn_age: node['stig']['login_defs']['pass_warn_age']
+    pass_max_days: node.default['stig']['login_defs']['pass_max_days'],
+    pass_min_days: node.default['stig']['login_defs']['pass_min_days'],
+    pass_warn_age: node.default['stig']['login_defs']['pass_warn_age']
   )
 end
