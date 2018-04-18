@@ -67,6 +67,11 @@ include_recipe 'stig::hosts'
 # UBUNTU: 8.2.3
 include_recipe 'stig::rsyslog'
 
+# RHEL6:  5.1.3
+# CENTOS6: 4.1.3
+# UBUNTU: 8.2.3
+include_recipe 'stig::syslog_ng'
+
 # RHEL6:  5.3
 # CENTOS6: 4.3
 # UBUNTU: 8.4

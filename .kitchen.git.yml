@@ -1,7 +1,7 @@
 <%
-  platforms = %w(centos-7 centos-6)
-  use_git = 'true'
-  use_json = 'true'
+  platforms = %w(centos-7.4 centos-6)
+  use_git = 'false'
+  use_json = 'false'
 %>
 ---
 driver:
@@ -25,7 +25,7 @@ platforms:
       inspec_tests:
       - name: <%= plat %>
       <% if use_git == 'false' %>
-        path: test/integration/<%= plat %>/inspec
+        path: ../inspec-profile-disa_stig-el7
       <% else %>
         git: https://github.com/djhaynes/inspec-profile-disa_stig-el7.git
         branch: dev
@@ -52,6 +52,7 @@ suites:
       - recipe[stig::mail_transfer_agent]
       - recipe[stig::hosts]
       - recipe[stig::rsyslog]
+      - recipe[stig::syslog_ng]
       - recipe[logrotate::global]
       - recipe[stig::sshd_config]
       - recipe[stig::system_auth]

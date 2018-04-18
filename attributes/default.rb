@@ -551,7 +551,7 @@ default['stig']['logging']['rsyslog_rules_debian'] = [
   'local0,local1.* -/var/log/localmessages',
   'local2,local3.* -/var/log/localmessages',
   'local4,local5.* -/var/log/localmessages',
-  'local6,local7.* -/var/log/localmessages'
+  'local6,local7.* -/var/log/localmessages',
 ]
 
 # Configure logrotate
