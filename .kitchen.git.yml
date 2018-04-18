@@ -25,7 +25,7 @@ platforms:
       inspec_tests:
       - name: <%= plat %>
       <% if use_git == 'false' %>
-        path: path: test/integration/<%= plat %>/inspec
+        path: test/integration/<%= plat %>/inspec
       <% else %>
         git: https://github.com/djhaynes/inspec-profile-disa_stig-el7.git
         branch: dev
