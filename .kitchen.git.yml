@@ -1,5 +1,5 @@
 <%
-  platforms = %w(centos-7 centos-6)
+  platforms = %w(centos-7.4 centos-6)
   use_git = 'true'
   use_json = 'true'
 %>
@@ -52,6 +52,7 @@ suites:
       - recipe[stig::mail_transfer_agent]
       - recipe[stig::hosts]
       - recipe[stig::rsyslog]
+      - recipe[stig::syslog_ng]
       - recipe[logrotate::global]
       - recipe[stig::sshd_config]
       - recipe[stig::system_auth]
